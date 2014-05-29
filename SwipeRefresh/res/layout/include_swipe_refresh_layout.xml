@@ -1,0 +1,16 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" >
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</merge>

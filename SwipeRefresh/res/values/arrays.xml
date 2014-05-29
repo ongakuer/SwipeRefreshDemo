@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="list_default">
+        <item>芒果</item>
+        <item>牛肉</item>
+        <item>橙汁</item>
+        <item>桃干</item>
+        <item>米糠</item>
+        <item>番茄酱</item>
+        <item>鸡肉</item>
+        <item>茶</item>
+        <item>咖啡豆</item>
+        <item>杏仁</item>
+        <item>栗子</item>
+        <item>椰枣</item>
+        <item>胡椒薄荷</item>
+        <item>啤酒花</item>
+        <item>草莓</item>
+        <item>油桃</item>
+    </string-array>
+    
+    
+    <string-array name="list_new">
+        <item>大米</item>
+        <item>小麦</item>
+        <item>大麦</item>
+        <item>荞麦</item>
+        <item>豌豆</item>
+        <item>干花生</item>
+        <item>马铃薯</item>
+        <item>芋头</item>
+        <item>甘薯</item>
+        <item>山药</item>
+        <item>魔芋</item>
+        <item>甘蔗</item>
+        <item>山葵</item>
+        <item>青梗菜</item>
+        <item>菊苣</item>
+        <item>茼蒿</item>
+        <item>洋葱</item>
+        <item>大蒜</item>
+        <item>胡萝卜</item>
+        <item>番茄</item>
+        <item>茄子</item>
+        <item>黄瓜</item>
+        <item>西瓜</item>
+        <item>菠菜</item>
+        <item>胡萝卜</item>
+        <item>柠檬</item>
+        <item>苹果</item>
+        <item>枇杷</item>
+        <item>蓝莓</item>
+        <item>葡萄</item>
+    </string-array>
+    
+
+</resources>
