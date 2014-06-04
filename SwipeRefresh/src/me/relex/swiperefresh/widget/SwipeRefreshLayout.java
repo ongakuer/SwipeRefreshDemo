@@ -1,4 +1,5 @@
 package me.relex.swiperefresh.widget;
+
 /*
  * Copyright (C) 2013 The Android Open Source Project
  *
@@ -22,9 +23,9 @@ import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -62,7 +63,9 @@ import android.widget.AbsListView;
  */
 public class SwipeRefreshLayout extends ViewGroup {
 
-    private static final long RETURN_TO_ORIGINAL_POSITION_TIMEOUT = 300;
+    private static final String TAG = "SwipeRefreshLayout";
+
+    private static final long RETURN_TO_ORIGINAL_POSITION_TIMEOUT = 0L;
 
     private static final float ACCELERATE_INTERPOLATION_FACTOR = 1.5f;
 
@@ -88,7 +91,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     private boolean mRefreshing = false;
 
-    private int mTouchSlop;
+    //    private int mTouchSlop;
 
     private float mDistanceToTriggerSync = -1;
 
@@ -103,6 +106,8 @@ public class SwipeRefreshLayout extends ViewGroup {
     private int mProgressBarHeight;
 
     private int mCurrentTargetOffsetTop;
+
+    private boolean mEnablePullDown = true;
 
     // Target is returning to its start offset because it was cancelled or a
     // refresh was triggered.
@@ -122,12 +127,14 @@ public class SwipeRefreshLayout extends ViewGroup {
             if (mFrom != mOriginalOffsetTop) {
                 targetTop = (mFrom + (int) ((mOriginalOffsetTop - mFrom) * interpolatedTime));
             }
+
             int offset = targetTop - mTarget.getTop();
             final int currentTop = mTarget.getTop();
             if (offset + currentTop < 0) {
                 offset = 0 - currentTop;
             }
             setTargetOffsetTopAndBottom(offset);
+
         }
     };
 
@@ -211,11 +218,9 @@ public class SwipeRefreshLayout extends ViewGroup {
     public SwipeRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-
+        //        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mMediumAnimationDuration = getResources().getInteger(
                 android.R.integer.config_mediumAnimTime);
-
         setWillNotDraw(false);
         mProgressBar = new SwipeProgressBar(this);
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -427,33 +432,39 @@ public class SwipeRefreshLayout extends ViewGroup {
                 if (mDownEvent != null && !mReturningToStart) {
                     final float eventY = event.getY();
                     float yDiff = eventY - mDownEvent.getY();
-                    if (yDiff > mTouchSlop) {
-                        // User velocity passed min velocity; trigger a refresh
-                        if (yDiff > mDistanceToTriggerSync) {
-                            // User movement passed distance; trigger a refresh
-                            startRefresh();
-                            handled = true;
-                            break;
-                        } else {
-                            // Just track the user's movement
-                            setTriggerPercentage(mAccelerateInterpolator.getInterpolation(yDiff
-                                    / mDistanceToTriggerSync));
-                            float offsetTop = yDiff;
-                            if (mPrevY > eventY) {
-                                offsetTop = yDiff - mTouchSlop;
-                            }
-                            updateContentOffsetTop((int) (offsetTop));
-                            if (mPrevY > eventY && (mTarget.getTop() < mTouchSlop)) {
-                                // If the user puts the view back at the top, we
-                                // don't need to. This shouldn't be considered
-                                // cancelling the gesture as the user can restart from the top.
-                                removeCallbacks(mCancel);
-                            } else {
-                                updatePositionTimeout();
-                            }
-                            mPrevY = event.getY();
-                            handled = true;
+                    //                    if (yDiff > mTouchSlop) {
+                    // User velocity passed min velocity; trigger a refresh
+                    if (yDiff > mDistanceToTriggerSync) {
+                        // User movement passed distance; trigger a refresh
+                        startRefresh();
+                        handled = true;
+                        break;
+                    } else {
+                        // Just track the user's movement
+                        setTriggerPercentage(mAccelerateInterpolator.getInterpolation(yDiff
+                                / mDistanceToTriggerSync));
+                        float offsetTop = yDiff;
+
+                        Log.i(TAG, "yDiff = " + yDiff);
+
+                        if (mPrevY > eventY) {
+                            offsetTop = yDiff /*- mTouchSlop*/;
                         }
+
+                        Log.i(TAG, "offsetTop = " + offsetTop);
+
+                        updateContentOffsetTop((int) (offsetTop));
+                        if (mPrevY > eventY && (mTarget.getTop() <= 0 /*< mTouchSlop*/)) {
+                            // If the user puts the view back at the top, we
+                            // don't need to. This shouldn't be considered
+                            // cancelling the gesture as the user can restart from the top.
+                            removeCallbacks(mCancel);
+                        } else {
+                            // updatePositionTimeout();
+                        }
+                        mPrevY = event.getY();
+                        handled = true;
+                        //                        }
                     }
                 }
                 break;
@@ -463,6 +474,8 @@ public class SwipeRefreshLayout extends ViewGroup {
                     mDownEvent.recycle();
                     mDownEvent = null;
                 }
+                updatePositionTimeout();
+
                 break;
         }
         return handled;
@@ -485,14 +498,18 @@ public class SwipeRefreshLayout extends ViewGroup {
         setTargetOffsetTopAndBottom(targetTop - currentTop);
     }
 
-    private void setTargetOffsetTopAndBottom(int offset) {
-        mTarget.offsetTopAndBottom(offset);
-        mCurrentTargetOffsetTop = mTarget.getTop();
+    private void setTargetOffsetTopAndBottom(int offset) { //TODO 控制
+        if (mEnablePullDown) {
+
+            mTarget.offsetTopAndBottom(offset);
+            mCurrentTargetOffsetTop = mTarget.getTop();
+        }
     }
 
     private void updatePositionTimeout() {
         removeCallbacks(mCancel);
-        postDelayed(mCancel, RETURN_TO_ORIGINAL_POSITION_TIMEOUT);
+        //        postDelayed(mCancel, RETURN_TO_ORIGINAL_POSITION_TIMEOUT);
+        post(mCancel);
     }
 
     /**
