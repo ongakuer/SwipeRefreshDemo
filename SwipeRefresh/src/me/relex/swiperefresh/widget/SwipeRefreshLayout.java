@@ -218,7 +218,8 @@ public class SwipeRefreshLayout extends ViewGroup {
     public SwipeRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        //        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        //         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+
         mMediumAnimationDuration = getResources().getInteger(
                 android.R.integer.config_mediumAnimTime);
         setWillNotDraw(false);
@@ -231,6 +232,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
         setEnabled(a.getBoolean(0, true));
         a.recycle();
+
     }
 
     @Override
@@ -432,39 +434,39 @@ public class SwipeRefreshLayout extends ViewGroup {
                 if (mDownEvent != null && !mReturningToStart) {
                     final float eventY = event.getY();
                     float yDiff = eventY - mDownEvent.getY();
-                    //                    if (yDiff > mTouchSlop) {
-                    // User velocity passed min velocity; trigger a refresh
-                    if (yDiff > mDistanceToTriggerSync) {
-                        // User movement passed distance; trigger a refresh
-                        startRefresh();
-                        handled = true;
-                        break;
-                    } else {
-                        // Just track the user's movement
-                        setTriggerPercentage(mAccelerateInterpolator.getInterpolation(yDiff
-                                / mDistanceToTriggerSync));
-                        float offsetTop = yDiff;
-
-                        Log.i(TAG, "yDiff = " + yDiff);
-
-                        if (mPrevY > eventY) {
-                            offsetTop = yDiff /*- mTouchSlop*/;
-                        }
-
-                        Log.i(TAG, "offsetTop = " + offsetTop);
-
-                        updateContentOffsetTop((int) (offsetTop));
-                        if (mPrevY > eventY && (mTarget.getTop() <= 0 /*< mTouchSlop*/)) {
-                            // If the user puts the view back at the top, we
-                            // don't need to. This shouldn't be considered
-                            // cancelling the gesture as the user can restart from the top.
-                            removeCallbacks(mCancel);
+                    if (yDiff > 0) {
+                        // User velocity passed min velocity; trigger a refresh
+                        if (yDiff > mDistanceToTriggerSync) {
+                            // User movement passed distance; trigger a refresh
+                            startRefresh();
+                            handled = true;
+                            break;
                         } else {
-                            // updatePositionTimeout();
+                            // Just track the user's movement
+                            setTriggerPercentage(mAccelerateInterpolator.getInterpolation(yDiff
+                                    / mDistanceToTriggerSync));
+                            float offsetTop = yDiff;
+
+                            Log.i(TAG, "yDiff = " + yDiff);
+
+                            if (mPrevY > eventY) {
+                                offsetTop = yDiff /*- mTouchSlop*/;
+                            }
+
+                            Log.i(TAG, "offsetTop = " + offsetTop);
+
+                            updateContentOffsetTop((int) (offsetTop));
+                            if (mPrevY > eventY && (mTarget.getTop() <= 0 /*< mTouchSlop*/)) {
+                                // If the user puts the view back at the top, we
+                                // don't need to. This shouldn't be considered
+                                // cancelling the gesture as the user can restart from the top.
+                                removeCallbacks(mCancel);
+                            } else {
+                                // updatePositionTimeout();
+                            }
+                            mPrevY = event.getY();
+                            handled = true;
                         }
-                        mPrevY = event.getY();
-                        handled = true;
-                        //                        }
                     }
                 }
                 break;
