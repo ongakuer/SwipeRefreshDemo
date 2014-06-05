@@ -63,9 +63,7 @@ import android.widget.FrameLayout;
  */
 public class SwipeRefreshLayout extends ViewGroup {
 
-    private static final String TAG = "SwipeRefreshLayout";
-
-    private static final long RETURN_TO_ORIGINAL_POSITION_TIMEOUT = 0L;
+    //    private static final long RETURN_TO_ORIGINAL_POSITION_TIMEOUT = 0L;
 
     private static final float ACCELERATE_INTERPOLATION_FACTOR = 1.3f;
 
