@@ -4,9 +4,12 @@ import java.util.Arrays;
 
 import me.relex.swiperefresh.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,6 +23,15 @@ public class DemoFragment extends SwipeRefreshListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
+
+        // add custom header
+        ImageView image = new ImageView(inflater.getContext());
+        image.setImageResource(R.drawable.swift);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER;
+        mSwipeRefreshLayout.setHeaderView(image, layoutParams);
+
         mListView = (ListView) rootView.findViewById(R.id.list);
         mAdapter = new DemoAdapter();
         mListView.setAdapter(mAdapter);
@@ -67,4 +79,5 @@ public class DemoFragment extends SwipeRefreshListFragment {
     public void onLastItemVisible() {
         Toast.makeText(getActivity(), "滚动底部了", Toast.LENGTH_SHORT).show();
     }
+
 }
